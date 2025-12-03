@@ -7,10 +7,10 @@ public class TentacleController : MonoBehaviour
     public Transform endEffector;      
     public Transform[] joints;         
 
-    [Header("Parámetros del Gradiente")]
-    public float learningRate = 50.0f;
-    public float samplingDistance = 0.01f; 
-    public float stopThreshold = 0.1f; 
+    [Header("Parámetros")]
+    public float learningRate = 50.0f; //alpha
+    public float samplingDistance = 0.01f; // 
+    public float stopThreshold = 0.1f; //epsi
 
    
     private float[] anglesX, anglesY, anglesZ;
@@ -83,13 +83,13 @@ public class TentacleController : MonoBehaviour
         if (axis == 'y') joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i] + samplingDistance, anglesZ[i]);
         if (axis == 'z') joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i], anglesZ[i] + samplingDistance);
 
-        // 3. Calcular la nueva distancia (Error nuevo)
+        // 3. Calcular la nueva distancia 
         float distance2 = Vector3.Distance(endEffector.position, target.position);
 
         // 4. Calcular el gradiente (diferencia de error / cambio en ángulo)
         float gradient = (distance2 - distance1) / samplingDistance;
 
-        // 5. Devolver la articulación a su sitio original (importante)
+        // 5. Devolver la articulación a su sitio original
         joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i], anglesZ[i]);
 
         return gradient;

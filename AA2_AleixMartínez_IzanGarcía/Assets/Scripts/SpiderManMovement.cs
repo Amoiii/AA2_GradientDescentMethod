@@ -25,7 +25,7 @@ public class SpiderManMovement : MonoBehaviour
 
     void GetNewPosition()
     {
-        //punto aleatorio en el suelo
+        //punto aleatorio
         float x = Random.Range(-areaSize.x, areaSize.x);
         float z = Random.Range(-areaSize.z, areaSize.z);
         targetPos = new Vector3(x, transform.position.y, z);
