@@ -7,13 +7,15 @@ public class TentacleController : MonoBehaviour
     public Transform endEffector;
     public Transform[] joints;
 
-    [Header("El Otro Brazo (Para evitar choques)")]
-    public Transform otherArmEndEffector; // Arrastra aquí la punta del OTRO brazo
-    public float repulsionRange = 2.0f;   // A qué distancia empiezan a repelerse
-    public float repulsionForce = 5.0f;   // Cuánto "odio" se tienen (fuerza de empuje)
+    [Header("El Otro Brazo (Anti-Choque)")]
+    public Transform otherArmEndEffector;
+    public float repulsionRange = 2.0f;
+    public float repulsionForce = 10.0f; // Aumentado para que reaccionen más rápido al choque
 
     [Header("Parámetros del Gradiente")]
-    public float learningRate = 50.0f;
+    // CAMBIO 1: He subido esto de 50 a 150 para que el movimiento sea mucho más ágil
+    public float learningRate = 150.0f;
+
     public float samplingDistance = 0.01f;
     public float stopThreshold = 0.1f;
 
@@ -39,13 +41,12 @@ public class TentacleController : MonoBehaviour
     {
         if (target == null || endEffector == null) return;
 
-        // Ejecutamos varias veces para suavidad
-        for (int k = 0; k < 10; k++)
+        // CAMBIO 2: Aumentado de 10 a 25 iteraciones por frame.
+        // Esto hace que el algoritmo "piense" más rápido cada segundo.
+        for (int k = 0; k < 25; k++)
         {
-            // Usamos nuestra nueva función de coste que incluye la repulsión
             float error = CalculateCostFunction();
 
-            // Si el error es alto (estamos lejos O estamos chocando), corregimos
             if (error > stopThreshold)
             {
                 ApplyGradientDescent();
@@ -53,28 +54,25 @@ public class TentacleController : MonoBehaviour
         }
     }
 
-      float CalculateCostFunction()
+    float CalculateCostFunction()
     {
-        // Coste principal: Querer tocar a Spider-Man
+        // 1. Queremos tocar a Spider-Man
         float distanceToTarget = Vector3.Distance(endEffector.position, target.position);
 
-        //  penalización para asi evitar que vaya 
+        // 2. No queremos tocar al otro brazo
         float repulsionCost = 0;
 
         if (otherArmEndEffector != null)
         {
             float distanceToOtherArm = Vector3.Distance(endEffector.position, otherArmEndEffector.position);
 
-            // Si estamos demasiado cerca del otro brazo, aumentamos el error drásticamente
             if (distanceToOtherArm < repulsionRange)
             {
-                // Cuanto más cerca, mayor es el coste
-                // Usamos (Rango - Distancia) 
+                // Penalización exponencial para que reaccione brusco si se acerca mucho
                 repulsionCost = (repulsionRange - distanceToOtherArm) * repulsionForce;
             }
         }
 
-        //error
         return distanceToTarget + repulsionCost;
     }
 
@@ -82,41 +80,39 @@ public class TentacleController : MonoBehaviour
     {
         for (int i = 0; i < joints.Length; i++)
         {
+            // Calculamos gradientes
             float gradientX = CalculateGradient(i, 'x');
             float gradientY = CalculateGradient(i, 'y');
             float gradientZ = CalculateGradient(i, 'z');
 
+            // Actualizamos ángulos (theta_new = theta_old - alpha * gradient)
+            // Al ser learningRate más alto, este cambio es mayor -> más velocidad
             anglesX[i] -= learningRate * gradientX * Time.deltaTime;
             anglesY[i] -= learningRate * gradientY * Time.deltaTime;
             anglesZ[i] -= learningRate * gradientZ * Time.deltaTime;
 
+            // Aplicamos rotación
             joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i], anglesZ[i]);
         }
     }
 
     float CalculateGradient(int i, char axis)
     {
-        // Paso 1: Error actual
         float error1 = CalculateCostFunction();
 
-        // Paso 2: Mover virtualmente
         if (axis == 'x') joints[i].localRotation = Quaternion.Euler(anglesX[i] + samplingDistance, anglesY[i], anglesZ[i]);
         if (axis == 'y') joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i] + samplingDistance, anglesZ[i]);
         if (axis == 'z') joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i], anglesZ[i] + samplingDistance);
 
-        // Paso 3: Nuevo error (incluye repulsión)
         float error2 = CalculateCostFunction();
 
-        // Paso 4: Pendiente
         float gradient = (error2 - error1) / samplingDistance;
 
-        // Paso 5: Restaurar
         joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i], anglesZ[i]);
 
         return gradient;
     }
 
-   
     void OnDrawGizmos()
     {
         if (endEffector != null)

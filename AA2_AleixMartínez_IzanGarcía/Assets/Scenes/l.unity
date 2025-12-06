@@ -724,7 +724,7 @@ MonoBehaviour:
   otherArmEndEffector: {fileID: 562331495}
   repulsionRange: 2
   repulsionForce: 200
-  learningRate: 50
+  learningRate: 100
   samplingDistance: 0.01
   stopThreshold: 0.5
 --- !u!135 &527814686
@@ -813,7 +813,7 @@ Transform:
   m_GameObject: {fileID: 527814684}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.01, y: -0.26, z: 1.11}
+  m_LocalPosition: {x: 5.37, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -849,7 +849,7 @@ Transform:
   m_GameObject: {fileID: 528833863}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.83, y: 2.18, z: 2.46}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.86477757, y: 0.86477757, z: 0.86477757}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -867,9 +867,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f486477778d7a444a64e48d7877fb43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 0.2
   areaSize: {x: 5, y: 5, z: 5}
-  minHeight: 0.5
+  minHeight: 0
 --- !u!135 &528833866
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -992,7 +992,7 @@ MonoBehaviour:
   otherArmEndEffector: {fileID: 527814689}
   repulsionRange: 2
   repulsionForce: 200
-  learningRate: 50
+  learningRate: 100
   samplingDistance: 0.01
   stopThreshold: 0.5
 --- !u!135 &562331492
@@ -1081,7 +1081,7 @@ Transform:
   m_GameObject: {fileID: 562331490}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.9779156, z: -0, w: 0.2090001}
-  m_LocalPosition: {x: -6.0962553, y: -0.26, z: 4.134173}
+  m_LocalPosition: {x: -4.65, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1340,7 +1340,7 @@ Transform:
   m_GameObject: {fileID: 949016780}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.51, y: -0.35, z: 0}
+  m_LocalPosition: {x: -0.51, y: -0.44, z: 0}
   m_LocalScale: {x: 0.3950391, y: 0.3950391, z: 0.3950391}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1991,7 +1991,7 @@ Transform:
   m_GameObject: {fileID: 1642198877}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.51, y: -0.35, z: 0}
+  m_LocalPosition: {x: -0.51, y: -0.6, z: 0}
   m_LocalScale: {x: 0.3950391, y: 0.3950391, z: 0.3950391}
   m_ConstrainProportionsScale: 0
   m_Children: []
