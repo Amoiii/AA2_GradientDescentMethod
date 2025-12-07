@@ -721,9 +721,11 @@ MonoBehaviour:
   - {fileID: 1081097338}
   - {fileID: 1124218844}
   - {fileID: 627352947}
-  otherArmEndEffector: {fileID: 562331495}
+  otherArmEndEffector: {fileID: 0}
   repulsionRange: 2
-  repulsionForce: 200
+  repulsionForce: 10
+  targetBodyRadius: 0.8
+  targetRepulsionForce: 20
   learningRate: 100
   samplingDistance: 0.01
   stopThreshold: 0.5
@@ -849,7 +851,7 @@ Transform:
   m_GameObject: {fileID: 528833863}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.34, y: 0, z: 0}
   m_LocalScale: {x: 0.86477757, y: 0.86477757, z: 0.86477757}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -989,9 +991,11 @@ MonoBehaviour:
   - {fileID: 1531250599}
   - {fileID: 843531576}
   - {fileID: 1957095973}
-  otherArmEndEffector: {fileID: 527814689}
+  otherArmEndEffector: {fileID: 0}
   repulsionRange: 2
-  repulsionForce: 200
+  repulsionForce: 10
+  targetBodyRadius: 0.8
+  targetRepulsionForce: 20
   learningRate: 100
   samplingDistance: 0.01
   stopThreshold: 0.5
@@ -1340,7 +1344,7 @@ Transform:
   m_GameObject: {fileID: 949016780}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.51, y: -0.44, z: 0}
+  m_LocalPosition: {x: -0.28, y: -0.44, z: 0}
   m_LocalScale: {x: 0.3950391, y: 0.3950391, z: 0.3950391}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1991,7 +1995,7 @@ Transform:
   m_GameObject: {fileID: 1642198877}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.51, y: -0.6, z: 0}
+  m_LocalPosition: {x: -0.34, y: -0.1, z: -0}
   m_LocalScale: {x: 0.3950391, y: 0.3950391, z: 0.3950391}
   m_ConstrainProportionsScale: 0
   m_Children: []

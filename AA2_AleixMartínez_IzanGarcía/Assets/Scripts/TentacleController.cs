@@ -7,15 +7,19 @@ public class TentacleController : MonoBehaviour
     public Transform endEffector;
     public Transform[] joints;
 
-    [Header("El Otro Brazo (Anti-Choque)")]
+    [Header("El Otro Brazo (Anti-Choque entre brazos)")]
     public Transform otherArmEndEffector;
     public float repulsionRange = 2.0f;
-    public float repulsionForce = 10.0f; // Aumentado para que reaccionen más rápido al choque
+    public float repulsionForce = 10.0f;
+
+    [Header("Anti-Atravesar SpiderMan (NUEVO)")]
+    // Radio del cuerpo de SpiderMan (si es una esfera de escala 1, pon 0.6f o 0.7f)
+    public float targetBodyRadius = 0.8f;
+    // Fuerza con la que el cuerpo repele a los huesos del brazo
+    public float targetRepulsionForce = 20.0f;
 
     [Header("Parámetros del Gradiente")]
-    // CAMBIO 1: He subido esto de 50 a 150 para que el movimiento sea mucho más ágil
     public float learningRate = 150.0f;
-
     public float samplingDistance = 0.01f;
     public float stopThreshold = 0.1f;
 
@@ -41,8 +45,7 @@ public class TentacleController : MonoBehaviour
     {
         if (target == null || endEffector == null) return;
 
-        // CAMBIO 2: Aumentado de 10 a 25 iteraciones por frame.
-        // Esto hace que el algoritmo "piense" más rápido cada segundo.
+        // Iteraciones por frame
         for (int k = 0; k < 25; k++)
         {
             float error = CalculateCostFunction();
@@ -56,42 +59,52 @@ public class TentacleController : MonoBehaviour
 
     float CalculateCostFunction()
     {
-        // 1. Queremos tocar a Spider-Man
+        // 1. Coste Principal: La punta quiere llegar al centro
         float distanceToTarget = Vector3.Distance(endEffector.position, target.position);
 
-        // 2. No queremos tocar al otro brazo
-        float repulsionCost = 0;
-
+        // 2. Repulsión entre brazos (lo que ya tenías)
+        float armRepulsionCost = 0;
         if (otherArmEndEffector != null)
         {
             float distanceToOtherArm = Vector3.Distance(endEffector.position, otherArmEndEffector.position);
-
             if (distanceToOtherArm < repulsionRange)
             {
-                // Penalización exponencial para que reaccione brusco si se acerca mucho
-                repulsionCost = (repulsionRange - distanceToOtherArm) * repulsionForce;
+                armRepulsionCost = (repulsionRange - distanceToOtherArm) * repulsionForce;
             }
         }
 
-        return distanceToTarget + repulsionCost;
+        // 3. NUEVO: Repulsión del cuerpo de SpiderMan (Evitar atravesarlo)
+        float bodyCollisionCost = 0;
+
+        // Recorremos todas las articulaciones EXCEPTO la última (la punta sí debe tocarle)
+        for (int i = 0; i < joints.Length - 1; i++)
+        {
+            float distToSpidey = Vector3.Distance(joints[i].position, target.position);
+
+            // Si un hueso entra en el radio del cuerpo
+            if (distToSpidey < targetBodyRadius)
+            {
+                // Añadimos un coste muy alto para que el algoritmo busque otra postura
+                bodyCollisionCost += (targetBodyRadius - distToSpidey) * targetRepulsionForce;
+            }
+        }
+
+        // La función de coste total suma todo
+        return distanceToTarget + armRepulsionCost + bodyCollisionCost;
     }
 
     void ApplyGradientDescent()
     {
         for (int i = 0; i < joints.Length; i++)
         {
-            // Calculamos gradientes
             float gradientX = CalculateGradient(i, 'x');
             float gradientY = CalculateGradient(i, 'y');
             float gradientZ = CalculateGradient(i, 'z');
 
-            // Actualizamos ángulos (theta_new = theta_old - alpha * gradient)
-            // Al ser learningRate más alto, este cambio es mayor -> más velocidad
             anglesX[i] -= learningRate * gradientX * Time.deltaTime;
             anglesY[i] -= learningRate * gradientY * Time.deltaTime;
             anglesZ[i] -= learningRate * gradientZ * Time.deltaTime;
 
-            // Aplicamos rotación
             joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i], anglesZ[i]);
         }
     }
@@ -115,10 +128,11 @@ public class TentacleController : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (endEffector != null)
+        // Visualizar el área de "no tocar" de SpiderMan
+        if (target != null)
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(endEffector.position, repulsionRange);
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(target.position, targetBodyRadius);
         }
     }
 }
