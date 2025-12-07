@@ -13,9 +13,9 @@ public class TentacleController : MonoBehaviour
     public float repulsionForce = 10.0f;
 
     [Header("Anti-Atravesar SpiderMan (NUEVO)")]
-    // Radio del cuerpo de SpiderMan (si es una esfera de escala 1, pon 0.6f o 0.7f)
+   
     public float targetBodyRadius = 0.8f;
-    // Fuerza con la que el cuerpo repele a los huesos del brazo
+    
     public float targetRepulsionForce = 20.0f;
 
     [Header("Parámetros del Gradiente")]
@@ -62,7 +62,7 @@ public class TentacleController : MonoBehaviour
         // 1. Coste Principal: La punta quiere llegar al centro
         float distanceToTarget = Vector3.Distance(endEffector.position, target.position);
 
-        // 2. Repulsión entre brazos (lo que ya tenías)
+        // 2. Repulsión entre brazos 
         float armRepulsionCost = 0;
         if (otherArmEndEffector != null)
         {
@@ -73,7 +73,7 @@ public class TentacleController : MonoBehaviour
             }
         }
 
-        // 3. NUEVO: Repulsión del cuerpo de SpiderMan (Evitar atravesarlo)
+        // Repulsión de SpiderMan
         float bodyCollisionCost = 0;
 
         // Recorremos todas las articulaciones EXCEPTO la última (la punta sí debe tocarle)
@@ -84,7 +84,7 @@ public class TentacleController : MonoBehaviour
             // Si un hueso entra en el radio del cuerpo
             if (distToSpidey < targetBodyRadius)
             {
-                // Añadimos un coste muy alto para que el algoritmo busque otra postura
+                // Añadimos un coste alto
                 bodyCollisionCost += (targetBodyRadius - distToSpidey) * targetRepulsionForce;
             }
         }
