@@ -8,10 +8,10 @@ public class TentacleController : MonoBehaviour
     public Transform[] joints;
 
     [Header("Configuración de Zonas")]
-    public Transform bodyReference;    // El cuerpo del Dr. Octopus
+    public Transform bodyReference;    
     public bool isRightArm;            // ¿Es el brazo derecho?
 
-    // Velocidad a la que vuelve a su sitio cuando no ataca
+   
     public float returnSpeed = 2.0f;
 
     [Header("Anti-Choque (Solo cuando ataca)")]
@@ -68,7 +68,7 @@ public class TentacleController : MonoBehaviour
     {
         if (target == null || endEffector == null || bodyReference == null) return;
 
-        // --- LÓGICA DE ZONAS ---
+        // ZONAS
         Vector3 localTargetPos = bodyReference.InverseTransformPoint(target.position);
         bool targetInMyZone = false;
 
@@ -81,7 +81,7 @@ public class TentacleController : MonoBehaviour
             if (localTargetPos.x < 0) targetInMyZone = true; // Izquierda
         }
 
-        // --- DECISIÓN: ATACAR O DESCANSAR ---
+        // ATACAR O DESCANSAR
         if (targetInMyZone)
         {
             // MODO ATAQUE: Usamos Gradient Descent (IK)
@@ -96,12 +96,12 @@ public class TentacleController : MonoBehaviour
         }
         else
         {
-            // MODO REPOSO: Volver suavemente a la posición inicial
+            //Volver suavemente a la posición inicial
             ReturnToStartPose();
         }
     }
 
-    // Función para volver suavemente a la postura original
+    // postura original
     void ReturnToStartPose()
     {
         for (int i = 0; i < joints.Length; i++)
