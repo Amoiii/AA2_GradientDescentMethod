@@ -20,7 +20,7 @@ public class SpiderManMovement : MonoBehaviour
         Vector3 currentPosUnity = transform.position;
         Vector3 targetPosUnity = targetPos.ToUnity();
 
-        // MoveTowards manual
+        // MoveTowards 
         Vector3 direction = targetPosUnity - currentPosUnity;
         float distance = direction.magnitude;
 
