@@ -8,42 +8,39 @@ public class TentacleController : MonoBehaviour
     public Transform[] joints;
 
     [Header("Configuración de Zonas")]
-    public Transform bodyReference;    
-    public bool isRightArm;            // ¿Es el brazo derecho?
+    public Transform bodyReference;
+    public bool isRightArm;
 
-   
-    public float returnSpeed = 2.0f;
+    public float returnSpeed = 5.0f; 
 
     [Header("Anti-Choque (Solo cuando ataca)")]
     public Transform otherArmEndEffector;
     public float repulsionRange = 2.0f;
-    public float repulsionForce = 10.0f;
+    public float repulsionForce = 50.0f; 
 
-    [Header("Anti-Atravesar SpiderMan")]
-    public float targetBodyRadius = 0.8f;
-    public float targetRepulsionForce = 20.0f;
+    [Header("Anti-Atravesar SpiderMan (CRÍTICO)")]
+    public float targetBodyRadius = 1.0f; 
+    public float targetRepulsionForce = 500.0f; 
 
     [Header("Parámetros del Gradiente")]
-    public float learningRate = 150.0f;
+    public float learningRate = 300.0f; 
     public float samplingDistance = 0.01f;
     public float stopThreshold = 0.1f;
 
     // Variables de estado
     private float[] anglesX, anglesY, anglesZ;
 
-    // MEMORIA: Aquí guardamos cómo estaba el brazo al principio
+   
     private float[] initialAnglesX, initialAnglesY, initialAnglesZ;
 
     void Start()
     {
         int count = joints.Length;
 
-        // Inicializar arrays de trabajo
         anglesX = new float[count];
         anglesY = new float[count];
         anglesZ = new float[count];
 
-        // Inicializar arrays de memoria (Postura Inicial)
         initialAnglesX = new float[count];
         initialAnglesY = new float[count];
         initialAnglesZ = new float[count];
@@ -52,12 +49,10 @@ public class TentacleController : MonoBehaviour
         {
             Vector3 currentRot = joints[i].localEulerAngles;
 
-            // Guardamos la rotación actual para trabajar
             anglesX[i] = currentRot.x;
             anglesY[i] = currentRot.y;
             anglesZ[i] = currentRot.z;
 
-            // Guardamos la rotación inicial como "Copia de Seguridad"
             initialAnglesX[i] = currentRot.x;
             initialAnglesY[i] = currentRot.y;
             initialAnglesZ[i] = currentRot.z;
@@ -74,18 +69,19 @@ public class TentacleController : MonoBehaviour
 
         if (isRightArm)
         {
-            if (localTargetPos.x > 0) targetInMyZone = true; // Derecha
+            if (localTargetPos.x > 0) targetInMyZone = true;
         }
         else
         {
-            if (localTargetPos.x < 0) targetInMyZone = true; // Izquierda
+            if (localTargetPos.x < 0) targetInMyZone = true;
         }
 
         // ATACAR O DESCANSAR
         if (targetInMyZone)
         {
-            // MODO ATAQUE: Usamos Gradient Descent (IK)
-            for (int k = 0; k < 25; k++)
+            // MODO ATAQUE: Aumentamos iteraciones a 40 para reacción instantánea
+            // Esto hace que el brazo sea "más listo" en cada frame
+            for (int k = 0; k < 50; k++)
             {
                 float error = CalculateCostFunction();
                 if (error > stopThreshold)
@@ -96,23 +92,18 @@ public class TentacleController : MonoBehaviour
         }
         else
         {
-            //Volver suavemente a la posición inicial
             ReturnToStartPose();
         }
     }
 
-    // postura original
     void ReturnToStartPose()
     {
         for (int i = 0; i < joints.Length; i++)
         {
-            // Usamos LerpAngle para interpolar suavemente desde el ángulo actual al inicial
-            // LerpAngle maneja automáticamente el salto de 360 a 0 grados.
             anglesX[i] = Mathf.LerpAngle(anglesX[i], initialAnglesX[i], returnSpeed * Time.deltaTime);
             anglesY[i] = Mathf.LerpAngle(anglesY[i], initialAnglesY[i], returnSpeed * Time.deltaTime);
             anglesZ[i] = Mathf.LerpAngle(anglesZ[i], initialAnglesZ[i], returnSpeed * Time.deltaTime);
 
-            // Aplicamos la rotación
             joints[i].localRotation = Quaternion.Euler(anglesX[i], anglesY[i], anglesZ[i]);
         }
     }
@@ -133,14 +124,24 @@ public class TentacleController : MonoBehaviour
             }
         }
 
-        // 3. Repulsión de SpiderMan (No atravesar)
+        // 3. Repulsión de SpiderMan (MODIFICADO PARA NO ATRAVESAR)
         float bodyCollisionCost = 0;
+
+        // Revisamos todos los huesos MENOS la punta
         for (int i = 0; i < joints.Length - 1; i++)
         {
             float distToSpidey = Vector3.Distance(joints[i].position, target.position);
+
             if (distToSpidey < targetBodyRadius)
             {
-                bodyCollisionCost += (targetBodyRadius - distToSpidey) * targetRepulsionForce;
+              
+                // Elevamos la penetración al cuadrado (Mathf.Pow).
+                
+                // si entra se dispara exponencialmente.
+             
+
+                float penetrationDepth = targetBodyRadius - distToSpidey;
+                bodyCollisionCost += Mathf.Pow(penetrationDepth, 2) * targetRepulsionForce;
             }
         }
 
@@ -183,8 +184,8 @@ public class TentacleController : MonoBehaviour
     {
         if (target != null)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(target.position, targetBodyRadius);
+            Gizmos.color = new Color(1, 0, 0, 0.3f);
+            Gizmos.DrawSphere(target.position, targetBodyRadius);
         }
     }
 }
