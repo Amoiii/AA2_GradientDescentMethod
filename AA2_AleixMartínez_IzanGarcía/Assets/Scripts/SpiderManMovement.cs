@@ -16,7 +16,7 @@ public class SpiderManMovement : MonoBehaviour
 
     void Update()
     {
-        // Conversión necesaria para mover el Transform
+        
         Vector3 currentPosUnity = transform.position;
         Vector3 targetPosUnity = targetPos.ToUnity();
 

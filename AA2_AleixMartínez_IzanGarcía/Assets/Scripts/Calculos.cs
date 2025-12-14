@@ -34,7 +34,7 @@ public struct MyVector3
     public static MyVector3 FromUnity(Vector3 v) => new MyVector3(v.x, v.y, v.z);
 }
 
-// CUATERNIÓN
+// cuatern
 
 public struct MyQuaternion
 {
@@ -45,8 +45,8 @@ public struct MyQuaternion
         this.x = x; this.y = y; this.z = z; this.w = w;
     }
 
-    // Conversión de Ángulos de Euler (Grados) a Cuaternión
-    // q = cos(a/2) + sin(a/2) * eje
+    // de Euler (Grados) a Cuaternión q = cos(a/2) + sin(a/2) * eje
+
     public static MyQuaternion Euler(float pitch, float yaw, float roll)
     {
         // Convertir a radianes

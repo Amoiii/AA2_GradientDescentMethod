@@ -74,11 +74,11 @@ public class TentacleController : MonoBehaviour
 
         if (isRightArm)
         {
-            if (dotProduct > 0) targetInMyZone = true; // Está en el lado del vector Right
+            if (dotProduct > 0) targetInMyZone = true;
         }
         else
         {
-            if (dotProduct < 0) targetInMyZone = true; // Está en el lado opuesto
+            if (dotProduct < 0) targetInMyZone = true;
         }
 
         if (targetInMyZone)
@@ -184,7 +184,7 @@ public class TentacleController : MonoBehaviour
         else if (axis == 'y') { tempAngle = anglesY[i]; anglesY[i] += samplingDistance; }
         else if (axis == 'z') { tempAngle = anglesZ[i]; anglesZ[i] += samplingDistance; }
 
-        // Aplicamos rotación de prueba con NUESTRO Cuaternión
+        // Aplicamos rotación de prueba con Cuaternión
         MyQuaternion q = MyQuaternion.Euler(anglesX[i], anglesY[i], anglesZ[i]);
         joints[i].localRotation = q.ToUnity();
 
